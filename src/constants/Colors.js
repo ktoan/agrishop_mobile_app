@@ -1,0 +1,15 @@
+export default {
+  primary: '#17202A',
+  white: '#fff',
+  black: '#000',
+  blue: '#5D5FEE',
+  grey: '#BABBC3',
+  light: '#F0F3F4',
+  red: '#FA5252',
+  facebook: '#4267B2',
+  google: '#DB4437',
+  yellow: '#FAB005',
+  overlay: 'rgba(0,0,0,0.5)',
+  lightGrey: 'rgba(255,255,255,1)',
+  lightOverlay: 'rgba(0,0,0, 0.3)',
+};
