@@ -17,3 +17,12 @@ export const getMaxAndMinPriceProduct = products => {
   );
   return {max: maxProduct.price, min: minProduct.price};
 };
+
+export const fetchProductsByCategory = (products, code) => {
+  if (code === 'all') return products;
+  const newProducts = products.filter(p => {
+    let consistCategory = p.categories.some(category => category.code === code);
+    if (consistCategory) return p;
+  });
+  return newProducts;
+};

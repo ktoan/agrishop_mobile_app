@@ -7,8 +7,9 @@ import Colors from '../../constants/Colors';
 import Images from '../../constants/Images';
 import Sizes from '../../constants/Sizes';
 import MainLayout from '../../layouts/MainLayout';
+import {connect} from 'react-redux';
 
-const InformationScreen = ({navigation}) => {
+const InformationScreen = ({navigation, user}) => {
   return (
     <MainLayout
       renderHeader={() => (
@@ -47,7 +48,7 @@ const InformationScreen = ({navigation}) => {
           }}>
           <RenderPNG
             imageSource={{
-              uri: 'https://scontent.fdad3-6.fna.fbcdn.net/v/t1.6435-9/169267831_1253554315046481_8931794399160773609_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=a4a2d7&_nc_ohc=t799v6q8gysAX8nZybf&_nc_ht=scontent.fdad3-6.fna&oh=00_AfAz8oTtq1-HKVlLZPSYJ1DI-SSfhEX7uCvV_CktxIjtlw&oe=645DFF78',
+              uri: user.avatar,
             }}
             size={100}
             style={{borderRadius: 10}}
@@ -76,27 +77,27 @@ const InformationScreen = ({navigation}) => {
         }}>
         <InformationFlatListItem
           label={'Full Name'}
-          value={'Nguyen Khanh Toan'}
+          value={user.fullName}
           style={{marginBottom: Sizes.space3}}
         />
         <InformationFlatListItem
           label={'Email Address'}
-          value={'nktoan.20it1@vku.udn.vn'}
+          value={user.email}
           style={{marginBottom: Sizes.space3}}
         />
         <InformationFlatListItem
           label={'Phone Number'}
-          value={'0868319857'}
+          value={user.phone}
           style={{marginBottom: Sizes.space3}}
         />
         <InformationFlatListItem
           label={'Gender'}
-          value={'Male'}
+          value={user.gender}
           style={{marginBottom: Sizes.space3}}
         />
         <InformationFlatListItem
           label={'Day Of Birth'}
-          value={'06/03/2002'}
+          value={user.dayOfBirth}
           style={{marginBottom: Sizes.space3}}
         />
       </View>
@@ -104,4 +105,12 @@ const InformationScreen = ({navigation}) => {
   );
 };
 
-export default InformationScreen;
+const mapStateToProps = state => {
+  return {
+    user: state.auth.user,
+  };
+};
+
+const mapActionToProps = {};
+
+export default connect(mapStateToProps, mapActionToProps)(InformationScreen);

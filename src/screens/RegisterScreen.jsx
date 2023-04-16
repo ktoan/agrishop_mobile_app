@@ -11,11 +11,16 @@ import Images from '../constants/Images';
 import Shadow from '../constants/Shadow';
 import Sizes from '../constants/Sizes';
 import AuthLayout from '../layouts/AuthLayout';
-import LineDivider from '../components/LineDivider';
+import {showErrorToast} from '../utils/ToastActions';
+import {connect, useDispatch} from 'react-redux';
+import {register} from '../redux/actions/authActions';
 
-const RegisterScreen = ({navigation}) => {
+const RegisterScreen = ({navigation, register}) => {
+  const dispatch = useDispatch();
+
   const [formValue, setFormValue] = useState({
     email: '',
+    fullName: '',
     password: '',
     confirmPassword: '',
     dayOfBirth: '',
@@ -23,44 +28,113 @@ const RegisterScreen = ({navigation}) => {
     phone: '',
   });
 
+  function onChangeTextInput(value, name) {
+    setFormValue({...formValue, [name]: value});
+  }
+
+  function onChangeSelectDropdown(value) {
+    setFormValue({...formValue, gender: value});
+  }
+
+  function onChangeDateInput(value) {
+    setFormValue({...formValue, dayOfBirth: value});
+  }
+
+  function onSubmitForm() {
+    let permitSubmit = true;
+    if (
+      !formValue.email ||
+      !formValue.fullName ||
+      !formValue.password ||
+      !formValue.confirmPassword ||
+      !formValue.phone ||
+      !formValue.dayOfBirth ||
+      !formValue.gender
+    ) {
+      showErrorToast('All fields must be filled!');
+      permitSubmit = false;
+    }
+    if (formValue.password !== formValue.confirmPassword) {
+      showErrorToast('Confirmation password is not matched!');
+      permitSubmit = false;
+    }
+    if (permitSubmit) {
+      const {confirmPassword, ...registerForm} = formValue;
+      register(dispatch, registerForm, () => {
+        clearForm();
+        navigation.navigate('LoginScreen');
+      });
+    }
+  }
+
+  function clearForm() {
+    setFormValue({
+      email: '',
+      fullName: '',
+      password: '',
+      confirmPassword: '',
+      dayOfBirth: '',
+      gender: '',
+      phone: '',
+    });
+  }
+
   return (
     <AuthLayout title="Register" sub_title="Enter your details to accompany us">
       <Input
         renderLeftIcon={() => <RenderPNG imageSource={Images.email} />}
         placeholder="Email"
         style={{marginBottom: Sizes.space3}}
+        value={formValue.email}
+        onChangeText={value => onChangeTextInput(value, 'email')}
       />
       <Input
         renderLeftIcon={() => <RenderPNG imageSource={Images.name} />}
         placeholder="Full Name"
         style={{marginBottom: Sizes.space3}}
+        value={formValue.fullName}
+        onChangeText={value => onChangeTextInput(value, 'fullName')}
       />
       <Input
         renderLeftIcon={() => <RenderPNG imageSource={Images.password} />}
         placeholder="Password"
         style={{marginBottom: Sizes.space3}}
+        value={formValue.password}
+        onChangeText={value => onChangeTextInput(value, 'password')}
+        password
       />
       <Input
         renderLeftIcon={() => <RenderPNG imageSource={Images.password} />}
         placeholder="Confirmation Password"
+        password
         style={{marginBottom: Sizes.space3}}
+        value={formValue.confirmPassword}
+        onChangeText={value => onChangeTextInput(value, 'confirmPassword')}
       />
       <Input
         renderLeftIcon={() => <RenderPNG imageSource={Images.phone} />}
         placeholder="Phone Number"
+        value={formValue.phone}
+        onChangeText={value => onChangeTextInput(value, 'phone')}
         style={{marginBottom: Sizes.space3}}
       />
-      <DateInput placeholder="Day Of Birth" />
+      <DateInput
+        placeholder="Day Of Birth"
+        value={formValue.dayOfBirth}
+        setValue={onChangeDateInput}
+      />
       <SelectDropdown
         data={[
           {value: 'MALE', label: 'Male'},
           {value: 'FEMALE', label: 'Female'},
           {value: 'DISCLOSED', label: 'Disclosed'},
         ]}
+        onChangeValue={onChangeSelectDropdown}
         renderLeftIcon={() => <RenderPNG imageSource={Images.gender} />}
         placeholder={'Gender'}
       />
       <Button
+        onPress={() => onSubmitForm()}
         text="Register"
         style={{...Shadow, marginBottom: Sizes.space3}}
         textStyle={{...Fonts.body4}}
@@ -76,4 +150,14 @@ const RegisterScreen = ({navigation}) => {
   );
 };
 
-export default RegisterScreen;
+const mapStateToProps = state => {
+  return {};
+};
+
+const mapActionToProps = () => {
+  return {
+    register,
+  };
+};
+
+export default connect(mapStateToProps, mapActionToProps)(RegisterScreen);

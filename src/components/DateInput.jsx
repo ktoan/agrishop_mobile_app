@@ -17,14 +17,6 @@ export default function DateInput({
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
 
-  function handleFocus() {
-    setIsFocused(true);
-  }
-
-  function handleBlur() {
-    setIsFocused(false);
-  }
-
   function handleConfirmValue(date) {
     setOpen(false);
     setDate(date);
@@ -59,8 +51,7 @@ export default function DateInput({
             }}>
             <RenderPNG imageSource={Images.calendar} />
             <TextInput
-              onFocus={handleFocus}
-              onBlur={handleBlur}
+              value={value}
               showSoftInputOnFocus={false}
               caretHidden={false}
               editable={false}

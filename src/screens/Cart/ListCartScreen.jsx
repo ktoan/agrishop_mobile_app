@@ -1,15 +1,18 @@
 import React from 'react';
-import {Text, View} from 'react-native';
-import Header from '../../components/Header';
-import MainLayout from '../../layouts/MainLayout';
-import Sizes from '../../constants/Sizes';
-import {cart} from '../../constants/FakeData';
-import CartFlatListItem from '../../components/FlatListItem/CartFlatListItem';
+import {View} from 'react-native';
+import {connect, useDispatch} from 'react-redux';
 import Button from '../../components/Button';
-import Fonts from '../../constants/Fonts';
+import CartFlatListItem from '../../components/FlatListItem/CartFlatListItem';
+import Header from '../../components/Header';
 import Colors from '../../constants/Colors';
+import Fonts from '../../constants/Fonts';
+import Sizes from '../../constants/Sizes';
+import MainLayout from '../../layouts/MainLayout';
+import {deleteUserCart} from '../../redux/actions/cartActions';
 
-const ListCartScreen = ({navigation}) => {
+const ListCartScreen = ({navigation, cart, deleteUserCart}) => {
+  const dispatch = useDispatch();
+
   return (
     <MainLayout renderHeader={() => <Header title="My Cart" />}>
       <View
@@ -22,6 +25,7 @@ const ListCartScreen = ({navigation}) => {
             key={item.id}
             data={item}
             isLast={index === cart.length - 1}
+            deleteCartItem={() => deleteUserCart(dispatch, item.id)}
           />
         ))}
       </View>
@@ -38,18 +42,21 @@ const ListCartScreen = ({navigation}) => {
           }}
           style={{marginBottom: Sizes.space3}}
         />
-        <Button
-          bgColor={Colors.white}
-          fgColor={Colors.primary}
-          bdColor={Colors.white}
-          text="Update your cart"
-          textStyle={{
-            ...Fonts.body4,
-          }}
-        />
       </View>
     </MainLayout>
   );
 };
 
-export default ListCartScreen;
+const mapStateToProps = state => {
+  return {
+    cart: state.app.cart,
+  };
+};
+
+const mapActionToProps = () => {
+  return {
+    deleteUserCart,
+  };
+};
+
+export default connect(mapStateToProps, mapActionToProps)(ListCartScreen);

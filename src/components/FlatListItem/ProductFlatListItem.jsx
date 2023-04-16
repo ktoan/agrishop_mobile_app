@@ -9,7 +9,12 @@ import Images from '../../constants/Images';
 import {calculateProductStar} from '../../utils/ProductHandling';
 import Button from '../../components/Button';
 
-const ProductFlatListItem = ({data, isLast, onPress = () => {}}) => {
+const ProductFlatListItem = ({
+  data,
+  isLast,
+  onPress = () => {},
+  addToCart = () => {},
+}) => {
   const renderSaleOff = () => {
     return data.saleOff ? (
       <View
@@ -63,6 +68,16 @@ const ProductFlatListItem = ({data, isLast, onPress = () => {}}) => {
           numberOfLines={1}>
           {data.name}
         </Text>
+        {/* Product price  */}
+        <View
+          style={{
+            marginBottom: Sizes.space3,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <Text style={{...Fonts.h4}}>${data.price}</Text>
+        </View>
         {/* Product rate */}
         <View
           style={{
@@ -88,6 +103,7 @@ const ProductFlatListItem = ({data, isLast, onPress = () => {}}) => {
             </Text>
           </View>
         </View>
+
         {/* Product Short Description  */}
         <Text style={{...Fonts.body4, color: Colors.grey}} numberOfLines={2}>
           {data.shortDescription}
@@ -95,7 +111,11 @@ const ProductFlatListItem = ({data, isLast, onPress = () => {}}) => {
       </View>
       {/* Render Sale off  */}
       {renderSaleOff()}
-      <Button text="Add to cart" textStyle={{...Fonts.h5}} />
+      <Button
+        text="Add to cart"
+        textStyle={{...Fonts.h5}}
+        onPress={addToCart}
+      />
     </View>
   );
 };

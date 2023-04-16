@@ -1,17 +1,30 @@
 import React, {useState} from 'react';
 import {FlatList, Text, TouchableOpacity, View} from 'react-native';
+import {connect, useDispatch} from 'react-redux';
+import FilterModal from '../../components/FilterModal';
 import CategoryFlatListItem from '../../components/FlatListItem/CategoryFlatListItem';
 import ProductFlatListItem from '../../components/FlatListItem/ProductFlatListItem';
 import Input from '../../components/Input';
 import RenderPNG from '../../components/RenderPNG';
-import {categories, products} from '../../constants/FakeData';
+import Colors from '../../constants/Colors';
 import Fonts from '../../constants/Fonts';
 import Images from '../../constants/Images';
 import Sizes from '../../constants/Sizes';
 import MainLayout from '../../layouts/MainLayout';
-import FilterModal from '../../components/FilterModal';
+import {fetchProductsCategory} from '../../redux/actions/productActions';
+import {updateUserCart} from '../../redux/actions/cartActions';
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({
+  navigation,
+  productsByCategory,
+  categories,
+  user,
+  products,
+  fetchProductsCategory,
+  updateUserCart,
+}) => {
+  const dispatch = useDispatch();
+
   const [selectedCategoryCode, setSelectedCategoryCode] = useState('all');
   const [showFilterModal, setShowFilterModal] = useState(false);
 
@@ -25,15 +38,17 @@ const HomeScreen = ({navigation}) => {
           paddingVertical: Sizes.space3,
         }}>
         <View>
-          <Text style={{...Fonts.h4, marginBottom: Sizes.space1}}>
-            Hello, Nguyen Khanh Toan
+          <Text
+            style={{...Fonts.h4, marginBottom: Sizes.space1, width: '90%'}}
+            numberOfLines={1}>
+            Hello, {user.fullName}
           </Text>
           <Text>What do you wanna buy for today?</Text>
         </View>
         <RenderPNG
           size={60}
           imageSource={{
-            uri: 'https://scontent.fdad3-6.fna.fbcdn.net/v/t1.6435-9/169267831_1253554315046481_8931794399160773609_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=a4a2d7&_nc_ohc=t799v6q8gysAX8nZybf&_nc_ht=scontent.fdad3-6.fna&oh=00_AfAz8oTtq1-HKVlLZPSYJ1DI-SSfhEX7uCvV_CktxIjtlw&oe=645DFF78',
+            uri: user.avatar,
           }}
           style={{borderRadius: 30}}
         />
@@ -93,7 +108,10 @@ const HomeScreen = ({navigation}) => {
             showsHorizontalScrollIndicator={false}
             renderItem={({item, index}) => (
               <CategoryFlatListItem
-                onPress={() => setSelectedCategoryCode(item.code)}
+                onPress={() => {
+                  setSelectedCategoryCode(item.code);
+                  fetchProductsCategory(dispatch, products, item.code);
+                }}
                 isActive={selectedCategoryCode === item.code}
                 data={item}
                 isLast={index === categories.length}
@@ -102,14 +120,26 @@ const HomeScreen = ({navigation}) => {
           />
           {/* Render products fetched by selected category */}
           <View style={{paddingVertical: Sizes.space3}}>
-            {products.map((item, index) => (
-              <ProductFlatListItem
-                onPress={() => handleViewProductDetails(item)}
-                key={`ProductFlatListCard-${item.id}`}
-                data={item}
-                isLast={index === products.length - 1}
-              />
-            ))}
+            {productsByCategory.length === 0 ? (
+              <Text
+                style={{
+                  ...Fonts.body4,
+                  color: Colors.grey,
+                  textAlign: 'center',
+                }}>
+                Have no products contains this category to showing!
+              </Text>
+            ) : (
+              productsByCategory.map((item, index) => (
+                <ProductFlatListItem
+                  onPress={() => handleViewProductDetails(item)}
+                  key={`ProductFlatListCard-${item.id}`}
+                  data={item}
+                  isLast={index === productsByCategory.length - 1}
+                  addToCart={() => updateUserCart(dispatch, item.id, 1)}
+                />
+              ))
+            )}
           </View>
         </View>
       </View>
@@ -117,4 +147,20 @@ const HomeScreen = ({navigation}) => {
   );
 };
 
-export default HomeScreen;
+const mapStateToProps = state => {
+  return {
+    user: state.auth.user,
+    productsByCategory: state.app.productsByCategory,
+    categories: state.app.categories,
+    products: state.app.products,
+  };
+};
+
+const mapActionToProps = () => {
+  return {
+    fetchProductsCategory,
+    updateUserCart,
+  };
+};
+
+export default connect(mapStateToProps, mapActionToProps)(HomeScreen);
