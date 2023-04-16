@@ -49,4 +49,6 @@ export default {
   city: require('../assets/icons/city.png'),
   country: require('../assets/icons/country.png'),
   camera_light: require('../assets/icons/camera_light.png'),
+  eye: require('../assets/icons/eye.png'),
+  blind: require('../assets/icons/blind.png'),
 };

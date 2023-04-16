@@ -1,8 +1,11 @@
-import {View, Text, TextInput} from 'react-native';
+import {View, Text, TextInput, TouchableOpacity} from 'react-native';
 import React from 'react';
 import Colors from '../constants/Colors';
 import Sizes from '../constants/Sizes';
 import Fonts from '../constants/Fonts';
+import {useState} from 'react';
+import RenderPNG from './RenderPNG';
+import Images from '../constants/Images';
 
 export default function Input({
   renderLeftIcon = () => {},
@@ -12,6 +15,7 @@ export default function Input({
   textStyle,
   ...props
 }) {
+  const [hidePassword, setHidePassword] = useState(password);
   return (
     <View
       style={{
@@ -37,8 +41,20 @@ export default function Input({
           ...textStyle,
         }}
         {...props}
+        secureTextEntry={hidePassword}
       />
-      {!password && renderRightIcon()}
+      {password ? (
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => setHidePassword(!hidePassword)}>
+          <RenderPNG
+            imageSource={hidePassword ? Images.eye : Images.blind}
+            size={25}
+          />
+        </TouchableOpacity>
+      ) : (
+        renderRightIcon()
+      )}
     </View>
   );
 }

@@ -7,7 +7,7 @@ import RenderPNG from '../RenderPNG';
 import Fonts from '../../constants/Fonts';
 import Images from '../../constants/Images';
 
-const CartFlatListItem = ({data, isLast}) => {
+const CartFlatListItem = ({data, isLast, deleteCartItem = () => {}}) => {
   const ActionQuantityButton = ({imageSource, onPress = () => {}}) => {
     return (
       <TouchableOpacity
@@ -23,10 +23,6 @@ const CartFlatListItem = ({data, isLast}) => {
       </TouchableOpacity>
     );
   };
-
-  function handleDeleteCartItem(id) {
-    console.log('Delete cart item ', id);
-  }
 
   return (
     <View
@@ -63,15 +59,13 @@ const CartFlatListItem = ({data, isLast}) => {
             alignItems: 'center',
           }}>
           <ActionQuantityButton imageSource={Images.subtract} />
-          <Text style={{...Fonts.h3, marginHorizontal: Sizes.space1}}>
+          <Text style={{...Fonts.h3, marginHorizontal: Sizes.space3}}>
             {data.quantity}
           </Text>
           <ActionQuantityButton imageSource={Images.plus} />
         </View>
       </View>
-      <TouchableOpacity
-        activeOpacity={0.7}
-        onPress={() => handleDeleteCartItem(data.id)}>
+      <TouchableOpacity activeOpacity={0.7} onPress={deleteCartItem}>
         <RenderPNG imageSource={Images.delete} />
       </TouchableOpacity>
     </View>

@@ -10,8 +10,11 @@ import Button from '../../components/Button';
 import LineDivider from '../../components/LineDivider';
 import {profile_links} from '../../constants/Data';
 import ProfileLinkFlatListItem from '../../components/FlatListItem/ProfileLinkFlatListItem';
+import {connect, useDispatch} from 'react-redux';
+import {logout} from '../../redux/actions/authActions';
 
-const ProfileScreen = ({navigation}) => {
+const ProfileScreen = ({navigation, logout, user}) => {
+  const dispatch = useDispatch();
   const renderHeader = () => {
     return (
       <>
@@ -32,14 +35,14 @@ const ProfileScreen = ({navigation}) => {
             }}>
             <RenderPNG
               imageSource={{
-                uri: 'https://scontent.fdad3-6.fna.fbcdn.net/v/t1.6435-9/169267831_1253554315046481_8931794399160773609_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=a4a2d7&_nc_ohc=t799v6q8gysAX8nZybf&_nc_ht=scontent.fdad3-6.fna&oh=00_AfAz8oTtq1-HKVlLZPSYJ1DI-SSfhEX7uCvV_CktxIjtlw&oe=645DFF78',
+                uri: user.avatar,
               }}
               size={100}
               style={{borderRadius: 10}}
             />
             <View style={{flex: 1, marginLeft: Sizes.space3}}>
               <Text style={{...Fonts.h4, width: '90%'}} numberOfLines={1}>
-                Nguyen Khanh Toan
+                {user.fullName}
               </Text>
               <Text
                 style={{
@@ -49,7 +52,7 @@ const ProfileScreen = ({navigation}) => {
                   width: '90%',
                 }}
                 numberOfLines={1}>
-                (nktoan.20it1@vku.udn.vn)
+                ({user.email})
               </Text>
               <Button
                 text="Lock your account"
@@ -72,7 +75,11 @@ const ProfileScreen = ({navigation}) => {
   };
 
   function onPress(data) {
-    !data.logout && navigation.navigate(data.redirectTo);
+    if (!data.logout) {
+      navigation.navigate(data.redirectTo);
+    } else {
+      logout(dispatch);
+    }
   }
 
   return (
@@ -96,4 +103,16 @@ const ProfileScreen = ({navigation}) => {
   );
 };
 
-export default ProfileScreen;
+const mapStateToProps = state => {
+  return {
+    user: state.auth.user,
+  };
+};
+
+const mapActionToProps = () => {
+  return {
+    logout,
+  };
+};
+
+export default connect(mapStateToProps, mapActionToProps)(ProfileScreen);

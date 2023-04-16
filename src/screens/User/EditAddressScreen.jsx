@@ -4,29 +4,29 @@ import MainLayout from '../../layouts/MainLayout';
 import Header from '../../components/Header';
 import Sizes from '../../constants/Sizes';
 import Input from '../../components/Input';
-import Button from '../../components/Button';
-import Fonts from '../../constants/Fonts';
 import RenderPNG from '../../components/RenderPNG';
 import Images from '../../constants/Images';
 import {useState} from 'react';
-import {showErrorToast} from '../../utils/ToastActions';
-import {createUserAddress} from '../../redux/actions/userActions';
+import Button from '../../components/Button';
+import Fonts from '../../constants/Fonts';
+import {updateUserAddress} from '../../redux/actions/userActions';
 import {connect, useDispatch} from 'react-redux';
 
-const AddAddressScreen = ({navigation, createUserAddress}) => {
+const EditAddressScreen = ({navigation, route, updateUserAddress}) => {
   const dispatch = useDispatch();
+  const {address} = route.params;
   const [formValue, setFormValue] = useState({
-    street: '',
-    district: '',
-    state: '',
-    country: '',
+    street: address.street,
+    district: address.district,
+    state: address.state,
+    country: address.country,
   });
 
   function onChangeTextInput(value, name) {
     setFormValue(formValue => ({...formValue, [name]: value}));
   }
 
-  function onSubmitForm() {
+  function onSubmit() {
     let permitSubmit = true;
     if (
       !formValue.street ||
@@ -38,8 +38,8 @@ const AddAddressScreen = ({navigation, createUserAddress}) => {
       permitSubmit = false;
     }
     if (permitSubmit) {
-      createUserAddress(dispatch, formValue, () => {
-        navigation.goBack(null);
+      updateUserAddress(dispatch, address.id, formValue, () => {
+        navigation.goBack();
       });
     }
   }
@@ -47,11 +47,7 @@ const AddAddressScreen = ({navigation, createUserAddress}) => {
   return (
     <MainLayout
       renderHeader={() => (
-        <Header
-          title="Create new address"
-          backEnabled
-          navigation={navigation}
-        />
+        <Header title="Edit Address" backEnabled navigation={navigation} />
       )}>
       <View
         style={{
@@ -61,35 +57,35 @@ const AddAddressScreen = ({navigation, createUserAddress}) => {
         <Input
           value={formValue.street}
           onChangeText={value => onChangeTextInput(value, 'street')}
-          placeholder="Street"
           style={{marginBottom: Sizes.space3}}
-          renderLeftIcon={() => <RenderPNG imageSource={Images.street} />}
+          placeholder="Address"
+          renderLeftIcon={() => <RenderPNG imageSource={Images.address} />}
         />
         <Input
-          placeholder="District"
           value={formValue.district}
+          placeholder="District"
           onChangeText={value => onChangeTextInput(value, 'district')}
           style={{marginBottom: Sizes.space3}}
           renderLeftIcon={() => <RenderPNG imageSource={Images.district} />}
         />
         <Input
-          placeholder="State"
           value={formValue.state}
+          placeholder="State"
           onChangeText={value => onChangeTextInput(value, 'state')}
           style={{marginBottom: Sizes.space3}}
           renderLeftIcon={() => <RenderPNG imageSource={Images.city} />}
         />
         <Input
-          placeholder="Country"
           value={formValue.country}
           onChangeText={value => onChangeTextInput(value, 'country')}
+          placeholder="Country"
           style={{marginBottom: Sizes.space3}}
           renderLeftIcon={() => <RenderPNG imageSource={Images.country} />}
         />
         <Button
-          text="Create"
+          text="Update address"
           textStyle={{...Fonts.body4}}
-          onPress={() => onSubmitForm()}
+          onPress={() => onSubmit()}
         />
       </View>
     </MainLayout>
@@ -102,8 +98,8 @@ const mapStateToProps = state => {
 
 const mapActionToProps = () => {
   return {
-    createUserAddress,
+    updateUserAddress,
   };
 };
 
-export default connect(mapStateToProps, mapActionToProps)(AddAddressScreen);
+export default connect(mapStateToProps, mapActionToProps)(EditAddressScreen);

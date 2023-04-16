@@ -10,8 +10,54 @@ import Button from '../../components/Button';
 import Fonts from '../../constants/Fonts';
 import DateInput from '../../components/DateInput';
 import SelectDropdown from '../../components/SelectDropdown';
+import {connect, useDispatch} from 'react-redux';
+import {updateInformation} from '../../redux/actions/userActions';
+import {useState} from 'react';
+import {showErrorToast, showSuccessToast} from '../../utils/ToastActions';
 
-const EditInformationScreen = ({navigation}) => {
+const EditInformationScreen = ({navigation, user, updateInformation}) => {
+  const dispatch = useDispatch();
+
+  const [formValue, setFormValue] = useState({
+    email: user.email,
+    fullName: user.fullName,
+    phone: user.phone,
+    dayOfBirth: user.dayOfBirth,
+    gender: user.gender,
+    password: 'xxxxxx',
+  });
+
+  function onChangeTextInput(value, name) {
+    setFormValue(formValue => ({...formValue, [name]: value}));
+  }
+
+  function onChangeSelectDropdown(value) {
+    setFormValue(formValue => ({...formValue, gender: value}));
+  }
+
+  function onChangeDateInput(value) {
+    setFormValue(formValue => ({...formValue, dayOfBirth: value}));
+  }
+
+  function onSubmitForm() {
+    let permitSubmit = true;
+    if (
+      !formValue.email ||
+      !formValue.fullName ||
+      !formValue.gender ||
+      !formValue.phone ||
+      !formValue.dayOfBirth
+    ) {
+      showErrorToast('All fields must be filled!');
+      permitSubmit = false;
+    }
+    if (permitSubmit) {
+      updateInformation(dispatch, user.id, formValue, () => {
+        navigation.goBack(null);
+      });
+    }
+  }
+
   return (
     <MainLayout
       renderHeader={() => (
@@ -25,22 +71,32 @@ const EditInformationScreen = ({navigation}) => {
         <Input
           placeholder="Email"
           editable={false}
-          value={'Nguyen Khanh Toan'}
+          value={formValue.email}
           style={{marginBottom: Sizes.space3}}
           renderLeftIcon={() => <RenderPNG imageSource={Images.email} />}
         />
         <Input
+          onChangeText={value => onChangeTextInput(value, 'fullName')}
           placeholder="Full Name"
+          value={formValue.fullName}
           style={{marginBottom: Sizes.space3}}
           renderLeftIcon={() => <RenderPNG imageSource={Images.name} />}
         />
         <Input
+          onChangeText={value => onChangeTextInput(value, 'phone')}
           placeholder="Phone Number"
+          value={formValue.phone}
           style={{marginBottom: Sizes.space3}}
           renderLeftIcon={() => <RenderPNG imageSource={Images.phone} />}
         />
-        <DateInput placeholder="Day Of Birth" />
+        <DateInput
+          setValue={onChangeDateInput}
+          placeholder="Day Of Birth"
+          value={formValue.dayOfBirth}
+        />
         <SelectDropdown
+          value={formValue.gender}
+          onChangeValue={onChangeSelectDropdown}
           data={[
             {value: 'MALE', label: 'Male'},
             {value: 'FEMALE', label: 'Female'},
@@ -52,10 +108,26 @@ const EditInformationScreen = ({navigation}) => {
         <Button
           text="Confirm update information"
           textStyle={{...Fonts.body4}}
+          onPress={() => onSubmitForm()}
         />
       </View>
     </MainLayout>
   );
 };
 
-export default EditInformationScreen;
+const mapStateToProps = state => {
+  return {
+    user: state.auth.user,
+  };
+};
+
+const mapActionToProps = () => {
+  return {
+    updateInformation,
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapActionToProps,
+)(EditInformationScreen);

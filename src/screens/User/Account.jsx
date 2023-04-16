@@ -6,6 +6,7 @@ import AddressesScreen from './AddressesScreen';
 import AddAddressScreen from './AddAddressScreen';
 import InformationScreen from './InformationScreen';
 import EditInformationScreen from './EditInformationScreen';
+import EditAddressScreen from './EditAddressScreen';
 
 const AccountStack = createNativeStackNavigator();
 
@@ -17,6 +18,10 @@ const Account = () => {
       <AccountStack.Screen
         name="AddAddressScreen"
         component={AddAddressScreen}
+      />
+      <AccountStack.Screen
+        name="EditAddressScreen"
+        component={EditAddressScreen}
       />
       <AccountStack.Screen
         name="InformationScreen"

@@ -1,20 +1,23 @@
-import {View, Text, FlatList, TouchableOpacity} from 'react-native';
-import React from 'react';
-import MainLayout from '../../layouts/MainLayout';
-import Header from '../../components/Header';
+import React, {useState} from 'react';
+import {Text, TouchableOpacity, View} from 'react-native';
+import {Rating} from 'react-native-ratings';
 import Swiper from 'react-native-swiper';
-import {products} from '../../constants/FakeData';
+import Button from '../../components/Button';
+import Header from '../../components/Header';
 import RenderPNG from '../../components/RenderPNG';
 import Colors from '../../constants/Colors';
-import Sizes from '../../constants/Sizes';
 import Fonts from '../../constants/Fonts';
-import {Rating} from 'react-native-ratings';
-import {calculateProductStar} from '../../utils/ProductHandling';
 import Images from '../../constants/Images';
-import {useState} from 'react';
-import Button from '../../components/Button';
+import Sizes from '../../constants/Sizes';
+import MainLayout from '../../layouts/MainLayout';
+import {calculateProductStar} from '../../utils/ProductHandling';
+import LineDivider from '../../components/LineDivider';
+import ReviewFlatListItem from '../../components/FlatListItem/ReviewFlatListItem';
+import {updateUserCart} from '../../redux/actions/cartActions';
+import {connect, useDispatch} from 'react-redux';
 
-const ProductDetailsScreen = ({navigation, route}) => {
+const ProductDetailsScreen = ({navigation, route, updateUserCart}) => {
+  const dispatch = useDispatch();
   const {product} = route.params;
   const [quantity, setQuantity] = useState(1);
   const ActionButton = ({imageSource, onPress}) => {
@@ -69,9 +72,11 @@ const ProductDetailsScreen = ({navigation, route}) => {
           paddingVertical: Sizes.space3,
           paddingHorizontal: Sizes.space4,
         }}>
+        {/* Render product name  */}
         <Text style={{...Fonts.h4, marginBottom: Sizes.space3}}>
           {product.name}
         </Text>
+        {/* Render product rate  */}
         <View
           style={{
             flexDirection: 'row',
@@ -96,6 +101,7 @@ const ProductDetailsScreen = ({navigation, route}) => {
             with {product.reviews.length} review(s)
           </Text>
         </View>
+        {/* Render product short description  */}
         <Text
           style={{
             ...Fonts.body5,
@@ -107,6 +113,7 @@ const ProductDetailsScreen = ({navigation, route}) => {
           }}>
           {product.shortDescription}
         </Text>
+        {/* Change quantity to add cart  */}
         <View
           style={{
             flexDirection: 'row',
@@ -143,15 +150,46 @@ const ProductDetailsScreen = ({navigation, route}) => {
             />
           </View>
         </View>
+        {/* Add cart button  */}
         <View
           style={{
             paddingVertical: Sizes.space3,
           }}>
-          <Button textStyle={{...Fonts.body4}} text="Add to cart" />
+          <Button
+            textStyle={{...Fonts.body4}}
+            text="Add to cart"
+            onPress={() => {
+              updateUserCart(dispatch, product.id, quantity);
+              setQuantity(1);
+            }}
+          />
         </View>
+      </View>
+      <LineDivider />
+      {/* Reviews  */}
+      <View
+        style={{
+          paddingVertical: Sizes.space3,
+          paddingHorizontal: Sizes.space4,
+        }}>
+        <Text style={{...Fonts.h4, marginBottom: Sizes.space3}}>Reviews</Text>
+        {/* List comment  */}
+        {product.reviews.map(review => (
+          <ReviewFlatListItem key={review.id} data={review} />
+        ))}
       </View>
     </MainLayout>
   );
 };
 
-export default ProductDetailsScreen;
+const mapStateToProps = state => {
+  return {};
+};
+
+const mapActionToProps = () => {
+  return {
+    updateUserCart,
+  };
+};
+
+export default connect(mapStateToProps, mapActionToProps)(ProductDetailsScreen);

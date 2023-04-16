@@ -1,14 +1,17 @@
 import React from 'react';
 import {View} from 'react-native';
+import {connect, useDispatch} from 'react-redux';
 import Button from '../../components/Button';
 import AddressFlatListItem from '../../components/FlatListItem/AddressFlatListItem';
 import Header from '../../components/Header';
-import {addresses} from '../../constants/FakeData';
 import Fonts from '../../constants/Fonts';
 import Sizes from '../../constants/Sizes';
 import MainLayout from '../../layouts/MainLayout';
+import {deleteUserAddress} from '../../redux/actions/userActions';
 
-const AddressesScreen = ({navigation}) => {
+const AddressesScreen = ({navigation, addresses, deleteUserAddress}) => {
+  const dispatch = useDispatch();
+
   return (
     <MainLayout
       renderHeader={() => (
@@ -23,17 +26,33 @@ const AddressesScreen = ({navigation}) => {
           <AddressFlatListItem
             key={item.id}
             data={item}
-            isLast={item === addresses.length - 1}
+            isLast={index === addresses.length - 1}
+            onEditPress={() =>
+              navigation.navigate('EditAddressScreen', {address: item})
+            }
+            onDeletePress={() => deleteUserAddress(dispatch, item.id)}
           />
         ))}
-        <Button
-          text="Create new address"
-          textStyle={{...Fonts.body4}}
-          onPress={() => navigation.navigate('AddAddressScreen')}
-        />
+        <View style={{paddingVertical: Sizes.space3}}>
+          <Button
+            text="Create new address"
+            textStyle={{...Fonts.body4}}
+            onPress={() => navigation.navigate('AddAddressScreen')}
+          />
+        </View>
       </View>
     </MainLayout>
   );
 };
 
-export default AddressesScreen;
+const mapStateToProps = state => {
+  return {
+    addresses: state.app.addresses,
+  };
+};
+
+const mapActionToProps = () => {
+  return {deleteUserAddress};
+};
+
+export default connect(mapStateToProps, mapActionToProps)(AddressesScreen);

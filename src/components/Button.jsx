@@ -19,7 +19,6 @@ export default function Button({
       onPress={onPress}
       style={{
         width: '100%',
-        height: 70,
         borderWidth: 1,
         borderColor: bdColor,
         backgroundColor: bgColor,

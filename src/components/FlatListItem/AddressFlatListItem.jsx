@@ -7,7 +7,12 @@ import Fonts from '../../constants/Fonts';
 import RenderPNG from '../RenderPNG';
 import Images from '../../constants/Images';
 
-const AddressFlatListItem = ({data, isLast}) => {
+const AddressFlatListItem = ({
+  data,
+  isLast,
+  onEditPress = () => {},
+  onDeletePress = () => {},
+}) => {
   const ActiveButton = ({imageSource, onPress = () => {}}) => {
     return (
       <TouchableOpacity
@@ -40,8 +45,8 @@ const AddressFlatListItem = ({data, isLast}) => {
         <Text style={{...Fonts.body5, color: Colors.grey}}>{data.country}</Text>
       </View>
       <View>
-        <ActiveButton imageSource={Images.edit} />
-        <ActiveButton imageSource={Images.delete} />
+        <ActiveButton imageSource={Images.edit} onPress={onEditPress} />
+        <ActiveButton imageSource={Images.delete} onPress={onDeletePress} />
       </View>
     </View>
   );

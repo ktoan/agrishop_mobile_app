@@ -33,6 +33,7 @@ export default function SelectDropdown({
           ...style,
         }}>
         <Dropdown
+          value={value}
           renderLeftIcon={renderLeftIcon}
           placeholder={label}
           data={data}
@@ -43,6 +44,10 @@ export default function SelectDropdown({
             ...Fonts.body5,
           }}
           selectedTextStyle={{paddingLeft: Sizes.space4, ...Fonts.body5}}
+          onChange={item => {
+            setValue(item.value);
+            onChangeValue(item.value);
+          }}
           showsVerticalScrollIndicator={false}
           labelField="label"
           valueField="value"

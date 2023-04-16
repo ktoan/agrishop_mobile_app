@@ -1,17 +1,40 @@
-import {View, Text} from 'react-native';
-import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Home from '../screens/Home/Home';
-import Account from './User/Account';
-import Product from './Product/Product';
-import Post from './Post/Post';
-import Cart from './Cart/Cart';
+import React, {useEffect} from 'react';
+import {connect, useDispatch} from 'react-redux';
 import TabIcon from '../components/TabIcon';
 import Images from '../constants/Images';
+import {fetchCategories} from '../redux/actions/categoryActions';
+import {fetchProducts} from '../redux/actions/productActions';
+import {fetchAddresses} from '../redux/actions/userActions';
+import Home from '../screens/Home/Home';
+import Cart from './Cart/Cart';
+import Post from './Post/Post';
+import Product from './Product/Product';
+import Account from './User/Account';
+import axios from 'axios';
+import {fetchCart} from '../redux/actions/cartActions';
+import {setAuthToken} from '../utils/SetAuthToken';
 
 const MainBottomTabs = createBottomTabNavigator();
 
-const MainScreen = () => {
+const MainScreen = ({
+  fetchCategories,
+  fetchProducts,
+  fetchAddresses,
+  fetchCart,
+  token,
+  user,
+}) => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    setAuthToken(token);
+    fetchCategories(dispatch);
+    fetchProducts(dispatch);
+    fetchAddresses(dispatch, user.id);
+    fetchCart(dispatch);
+  }, []);
+
   return (
     <MainBottomTabs.Navigator
       screenOptions={{
@@ -121,4 +144,15 @@ const MainScreen = () => {
   );
 };
 
-export default MainScreen;
+const mapStateToProps = state => {
+  return {
+    user: state.auth.user,
+    token: state.auth.access_token,
+  };
+};
+
+const mapActionToProps = () => {
+  return {fetchCategories, fetchProducts, fetchAddresses, fetchCart};
+};
+
+export default connect(mapStateToProps, mapActionToProps)(MainScreen);
