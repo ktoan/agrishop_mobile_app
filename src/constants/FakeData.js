@@ -500,3 +500,86 @@ export const cart = [
     quantity: 8,
   },
 ];
+
+export const product = {
+  id: 3,
+  modifiedDate: '2023-04-11T13:49:29.813+00:00',
+  createdDate: '2023-04-11T13:49:29.813+00:00',
+  name: 'Lorem ipsum dolor sit amet consectetur',
+  shortDescription:
+    'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Necessitatibus dolore sunt natus quisquam libero odio aliquam, in aspernatur explicabo vitae facilis quas eligendi quibusdam possimus earum? Magni obcaecati quod beatae quisquam in perferendis delectus voluptatem impedit fugit, deleniti expedita vero voluptate ad voluptatum sapiente. Neque placeat, eum explicabo iusto temporibus iste assumenda quibusdam dicta eius praesentium, omnis rem nulla sequi ab, perferendis nesciunt hic. Magnam numquam tenetur facere optio eum sed sapiente quas, soluta, nemo libero ipsum inventore dolore nostrum. Suscipit quasi nesciunt, excepturi tenetur neque animi cumque at maiores aut culpa officiis deserunt eaque, et cupiditate non perferendis quibusdam.',
+  information: 'Information 1',
+  amount: 2000,
+  images: [
+    {
+      id: 12,
+      modifiedDate: '2023-04-11T13:49:29.655+00:00',
+      createdDate: '2023-04-11T13:49:29.654+00:00',
+      url: 'http://res.cloudinary.com/dhdqfpb8p/image/upload/v1681220968/ecommerce/avatars/a38a6ee1-c812-42cc-80e1-8189abea1fe91681220964905.jpg',
+    },
+  ],
+  saleOff: 5.0,
+  categories: [
+    {
+      id: 1,
+      modifiedDate: '2023-03-30T15:42:50.198+00:00',
+      createdDate: '2023-03-30T15:42:50.198+00:00',
+      code: 'beetroot',
+      name: 'Beetroot',
+      image: {
+        id: 1,
+        modifiedDate: '2023-03-30T15:42:50.138+00:00',
+        createdDate: '2023-03-30T15:42:50.138+00:00',
+        url: 'https://res.cloudinary.com/dhdqfpb8p/image/upload/v1680617099/beetroot_ozxqa5.jpg',
+      },
+    },
+    {
+      id: 2,
+      modifiedDate: '2023-03-30T15:43:11.286+00:00',
+      createdDate: '2023-03-30T15:43:11.286+00:00',
+      code: 'vegetable',
+      name: 'Vegetable',
+      image: {
+        id: 2,
+        modifiedDate: '2023-03-30T15:43:11.258+00:00',
+        createdDate: '2023-03-30T15:43:11.258+00:00',
+        url: 'https://res.cloudinary.com/dhdqfpb8p/image/upload/v1680617099/vegetable_dqszff.jpg',
+      },
+    },
+  ],
+  price: 100.0,
+  reviews: [],
+};
+
+export const post = {
+  id: 1,
+  modifiedDate: '2023-04-02T07:20:50.713+00:00',
+  createdDate: '2023-04-02T07:20:50.713+00:00',
+  title: 'Post 1',
+  shortDescription: 'Description post 1',
+  content:
+    '<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, qui.</p><p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, qui.</p><p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, qui.</p><p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, qui.</p><strong>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, qui.</strong><p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, qui.</p><p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, qui.</p>',
+  image: {
+    id: 7,
+    modifiedDate: '2023-04-02T07:20:50.621+00:00',
+    createdDate: '2023-04-02T07:20:50.621+00:00',
+    url: 'http://res.cloudinary.com/dhdqfpb8p/image/upload/v1680420049/ecommerce/avatars/8b651e19-59de-467c-9048-f22f7337d5ef1680420048696.jpg',
+  },
+  author: {
+    id: 6,
+    modifiedDate: '2023-04-20T13:59:37.082+00:00',
+    createdDate: '2023-04-02T05:47:43.878+00:00',
+    fullName: 'Nguyen Toan',
+    email: 'nktoan.20it1@vku.udn.vn',
+    phone: '0868319857',
+    dayOfBirth: '2002-03-06',
+    gender: 'MALE',
+    avatar:
+      'https://res.cloudinary.com/dhdqfpb8p/image/upload/v1678948392/ecommerce/avatars/298a2a1f-4bfc-44ef-8e5e-b1991c6063941678948385111.jpg',
+    role: 'ADMIN',
+    locked: false,
+    enabled: true,
+    stripeCustomerId: null,
+  },
+  comments: [],
+};

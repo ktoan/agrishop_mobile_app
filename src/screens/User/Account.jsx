@@ -7,6 +7,8 @@ import AddAddressScreen from './AddAddressScreen';
 import InformationScreen from './InformationScreen';
 import EditInformationScreen from './EditInformationScreen';
 import EditAddressScreen from './EditAddressScreen';
+import OrdersScreen from './OrdersScreen';
+import LeaveReviewScreen from './LeaveReviewScreen';
 
 const AccountStack = createNativeStackNavigator();
 
@@ -30,6 +32,11 @@ const Account = () => {
       <AccountStack.Screen
         name="EditInformationScreen"
         component={EditInformationScreen}
+      />
+      <AccountStack.Screen name="OrdersScreen" component={OrdersScreen} />
+      <AccountStack.Screen
+        name="LeaveReviewScreen"
+        component={LeaveReviewScreen}
       />
     </AccountStack.Navigator>
   );

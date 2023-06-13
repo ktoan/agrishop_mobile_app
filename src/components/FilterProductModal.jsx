@@ -6,26 +6,58 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import {connect, useDispatch} from 'react-redux';
 import Colors from '../constants/Colors';
-import {categories, products} from '../constants/FakeData';
 import Fonts from '../constants/Fonts';
 import Sizes from '../constants/Sizes';
-import {getMaxAndMinPriceProduct} from '../utils/ProductHandling';
-import DropDownPicker from 'react-native-dropdown-picker';
-import TwoPointSlider from './TwoPointSlider';
+import {changeFilters} from '../redux/actions/productActions';
 import {convertCategoryFromServerToRendered} from '../utils/CategoryHandling';
+import {getMaxAndMinPriceProduct} from '../utils/ProductHandling';
+import TwoPointSlider from './TwoPointSlider';
 
-const FilterModal = ({isVisible, onClose = () => {}}) => {
+const FilterProductModal = ({
+  isVisible,
+  filters,
+  categories,
+  onClose = () => {},
+  products,
+  changeFilters,
+}) => {
+  const dispatch = useDispatch();
   const modalAnimationValue = useRef(new Animated.Value(0)).current;
-  const [showFilterModal, setShowFilterModal] = useState(isVisible);
+  const [showFilterProductModal, setShowFilterProductModal] =
+    useState(isVisible);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState([]);
-  const [items, setItems] = useState(
-    convertCategoryFromServerToRendered(categories),
-  );
+  const [items, setItems] = useState([]);
+  const [maxValue, setMax] = useState(100);
+  const [minValue, setMin] = useState(0);
+
+  const onChangeRateRangeTimeout = useRef(null);
+  const onChangePriceRangeTimeout = useRef(null);
+
+  function onChangeTwoPointsRate(values) {
+    if (onChangeRateRangeTimeout) {
+      clearTimeout(onChangeRateRangeTimeout.current);
+    }
+    onChangeRateRangeTimeout.current = setTimeout(() => {
+      changeFilters(dispatch, {rateRange: values});
+    }, 1000);
+  }
+
+  function onChangeTwoPointsPrice(values) {
+    if (onChangePriceRangeTimeout) {
+      clearTimeout(onChangePriceRangeTimeout.current);
+    }
+    onChangePriceRangeTimeout.current = setTimeout(() => {
+      changeFilters(dispatch, {priceRange: values});
+    }, 1000);
+  }
 
   useEffect(() => {
-    if (showFilterModal) {
+    setItems(convertCategoryFromServerToRendered(categories));
+    setValue(filters.categories);
+    if (showFilterProductModal) {
       Animated.timing(modalAnimationValue, {
         toValue: 1,
         duration: 500,
@@ -38,9 +70,10 @@ const FilterModal = ({isVisible, onClose = () => {}}) => {
         useNativeDriver: false,
       }).start(() => onClose());
     }
-  }, [showFilterModal]);
-
-  const {max, min} = getMaxAndMinPriceProduct(products);
+    const {max, min} = getMaxAndMinPriceProduct(products);
+    setMax(max);
+    setMin(min);
+  }, [showFilterProductModal]);
 
   const modalY = modalAnimationValue.interpolate({
     inputRange: [0, 1],
@@ -65,7 +98,8 @@ const FilterModal = ({isVisible, onClose = () => {}}) => {
   return (
     <Modal animationType="fade" transparent={true} visible={isVisible}>
       <View style={{flex: 1, backgroundColor: Colors.overlay}}>
-        <TouchableWithoutFeedback onPress={() => setShowFilterModal(false)}>
+        <TouchableWithoutFeedback
+          onPress={() => setShowFilterProductModal(false)}>
           <View
             style={{
               position: 'absolute',
@@ -95,43 +129,23 @@ const FilterModal = ({isVisible, onClose = () => {}}) => {
           <Section title={'Price'}>
             <View style={{alignItems: 'center', justifyContent: 'center'}}>
               <TwoPointSlider
-                values={[min, max]}
-                min={min}
-                max={max}
+                values={filters.priceRange}
+                min={0}
+                max={200}
                 prefix={'$'}
-                onValuesChange={values => console.log(values)}
+                onValuesChange={values => onChangeTwoPointsPrice(values)}
                 step={5}
               />
             </View>
           </Section>
-          <Section title={'Category'}>
-            <DropDownPicker
-              style={{marginTop: Sizes.space3}}
-              multiple
-              open={open}
-              autoScroll
-              maxHeight={200}
-              placeholder="Select categories..."
-              value={value}
-              items={items}
-              setOpen={setOpen}
-              setValue={setValue}
-              setItems={setItems}
-              showTickIcon={false}
-              mode="BADGE"
-              badgeColors={[Colors.primary]}
-              badgeTextStyle={{color: Colors.white}}
-              badgeDotColors={[Colors.white]}
-            />
-          </Section>
           <Section title={'Rate'}>
             <View style={{alignItems: 'center', justifyContent: 'center'}}>
               <TwoPointSlider
-                values={[0, 5]}
+                values={filters.rateRange}
                 min={0}
                 max={5}
                 prefix={'$'}
-                onValuesChange={values => console.log(values)}
+                onValuesChange={values => onChangeTwoPointsRate(values)}
                 step={0.5}
               />
             </View>
@@ -142,4 +156,16 @@ const FilterModal = ({isVisible, onClose = () => {}}) => {
   );
 };
 
-export default FilterModal;
+const mapStateToProps = state => {
+  return {
+    filters: state.product.filters,
+    categories: state.category.categories,
+    products: state.product.products,
+  };
+};
+
+const mapActionToProps = () => {
+  return {changeFilters};
+};
+
+export default connect(mapStateToProps, mapActionToProps)(FilterProductModal);

@@ -1,32 +1,29 @@
 import React, {useState} from 'react';
-import {FlatList, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, Text, View} from 'react-native';
 import {connect, useDispatch} from 'react-redux';
-import FilterModal from '../../components/FilterModal';
 import CategoryFlatListItem from '../../components/FlatListItem/CategoryFlatListItem';
 import ProductFlatListItem from '../../components/FlatListItem/ProductFlatListItem';
-import Input from '../../components/Input';
 import RenderPNG from '../../components/RenderPNG';
 import Colors from '../../constants/Colors';
 import Fonts from '../../constants/Fonts';
-import Images from '../../constants/Images';
 import Sizes from '../../constants/Sizes';
 import MainLayout from '../../layouts/MainLayout';
-import {fetchProductsCategory} from '../../redux/actions/productActions';
 import {updateUserCart} from '../../redux/actions/cartActions';
+import {fetchProductsByCategory} from '../../utils/ProductHandling';
+import PostFlatListItem from '../../components/FlatListItem/PostFlatListItem';
+import LineDivider from '../../components/LineDivider';
 
 const HomeScreen = ({
   navigation,
-  productsByCategory,
-  categories,
-  user,
   products,
-  fetchProductsCategory,
+  categories,
   updateUserCart,
+  user,
+  posts,
 }) => {
   const dispatch = useDispatch();
 
   const [selectedCategoryCode, setSelectedCategoryCode] = useState('all');
-  const [showFilterModal, setShowFilterModal] = useState(false);
 
   const renderHeader = () => {
     return (
@@ -50,7 +47,7 @@ const HomeScreen = ({
           imageSource={{
             uri: user.avatar,
           }}
-          style={{borderRadius: 30}}
+          style={{borderRadius: 30, borderWidth: 0.3, borderColor: Colors.grey}}
         />
       </View>
     );
@@ -60,7 +57,7 @@ const HomeScreen = ({
     navigation.navigate('Product', {
       screen: 'ProductDetailsScreen',
       params: {
-        product: product,
+        productId: product.id,
       },
     });
   }
@@ -68,32 +65,6 @@ const HomeScreen = ({
   return (
     <MainLayout renderHeader={renderHeader}>
       <View>
-        {/* Search input */}
-        <View
-          style={{
-            paddingHorizontal: Sizes.space4,
-            paddingVertical: Sizes.space3,
-          }}>
-          <Input
-            renderLeftIcon={() => <RenderPNG imageSource={Images.search} />}
-            placeholder="Search keywords..."
-            renderRightIcon={() => (
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => {
-                  setShowFilterModal(true);
-                }}>
-                <RenderPNG imageSource={Images.filter} />
-              </TouchableOpacity>
-            )}
-          />
-        </View>
-        {showFilterModal && (
-          <FilterModal
-            isVisible={showFilterModal}
-            onClose={() => setShowFilterModal(false)}
-          />
-        )}
         {/* List products by category */}
         <View
           style={{
@@ -110,7 +81,6 @@ const HomeScreen = ({
               <CategoryFlatListItem
                 onPress={() => {
                   setSelectedCategoryCode(item.code);
-                  fetchProductsCategory(dispatch, products, item.code);
                 }}
                 isActive={selectedCategoryCode === item.code}
                 data={item}
@@ -120,7 +90,8 @@ const HomeScreen = ({
           />
           {/* Render products fetched by selected category */}
           <View style={{paddingVertical: Sizes.space3}}>
-            {productsByCategory.length === 0 ? (
+            {fetchProductsByCategory(products, selectedCategoryCode).length ===
+            0 ? (
               <Text
                 style={{
                   ...Fonts.body4,
@@ -130,17 +101,55 @@ const HomeScreen = ({
                 Have no products contains this category to showing!
               </Text>
             ) : (
-              productsByCategory.map((item, index) => (
-                <ProductFlatListItem
-                  onPress={() => handleViewProductDetails(item)}
-                  key={`ProductFlatListCard-${item.id}`}
-                  data={item}
-                  isLast={index === productsByCategory.length - 1}
-                  addToCart={() => updateUserCart(dispatch, item.id, 1)}
-                />
-              ))
+              fetchProductsByCategory(products, selectedCategoryCode).map(
+                (item, index) => (
+                  <ProductFlatListItem
+                    onPress={() => handleViewProductDetails(item)}
+                    key={`ProductFlatListCard-${item.id}`}
+                    data={item}
+                    isLast={index === products.length - 1}
+                    addToCart={() =>
+                      updateUserCart(dispatch, {
+                        productId: item.id,
+                        quantity: 1,
+                      })
+                    }
+                  />
+                ),
+              )
             )}
           </View>
+        </View>
+        <LineDivider />
+        <View
+          style={{
+            paddingVertical: Sizes.space3,
+            paddingHorizontal: Sizes.space4,
+          }}>
+          <Text style={{marginBottom: Sizes.space3, ...Fonts.h3}}>
+            Latest Blogs
+          </Text>
+          {/* List 4 lasted posts */}
+          {posts.length === 0 ? (
+            <Text
+              style={{
+                ...Fonts.body4,
+                color: Colors.grey,
+                textAlign: 'center',
+              }}>
+              Have no posts to showing
+            </Text>
+          ) : (
+            posts
+              .slice(0, 4)
+              .map((item, index) => (
+                <PostFlatListItem
+                  data={item}
+                  key={index}
+                  isLast={index === 3}
+                />
+              ))
+          )}
         </View>
       </View>
     </MainLayout>
@@ -150,17 +159,14 @@ const HomeScreen = ({
 const mapStateToProps = state => {
   return {
     user: state.auth.user,
-    productsByCategory: state.app.productsByCategory,
-    categories: state.app.categories,
-    products: state.app.products,
+    products: state.product.products,
+    categories: state.category.categories,
+    posts: state.post.posts,
   };
 };
 
 const mapActionToProps = () => {
-  return {
-    fetchProductsCategory,
-    updateUserCart,
-  };
+  return {updateUserCart};
 };
 
 export default connect(mapStateToProps, mapActionToProps)(HomeScreen);

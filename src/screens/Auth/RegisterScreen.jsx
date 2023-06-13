@@ -1,21 +1,21 @@
 import React, {useState} from 'react';
 import {Text, TouchableOpacity} from 'react-native';
-import Button from '../components/Button';
-import DateInput from '../components/DateInput';
-import Input from '../components/Input';
-import RenderPNG from '../components/RenderPNG';
-import SelectDropdown from '../components/SelectDropdown';
-import Colors from '../constants/Colors';
-import Fonts from '../constants/Fonts';
-import Images from '../constants/Images';
-import Shadow from '../constants/Shadow';
-import Sizes from '../constants/Sizes';
-import AuthLayout from '../layouts/AuthLayout';
-import {showErrorToast} from '../utils/ToastActions';
 import {connect, useDispatch} from 'react-redux';
-import {register} from '../redux/actions/authActions';
+import Button from '../../components/Button';
+import DateInput from '../../components/DateInput';
+import Input from '../../components/Input';
+import RenderPNG from '../../components/RenderPNG';
+import SelectDropdown from '../../components/SelectDropdown';
+import Colors from '../../constants/Colors';
+import Fonts from '../../constants/Fonts';
+import Images from '../../constants/Images';
+import Shadow from '../../constants/Shadow';
+import Sizes from '../../constants/Sizes';
+import AuthLayout from '../../layouts/AuthLayout';
+import {registerNewUser} from '../../redux/actions/authActions';
+import {showErrorToast} from '../../utils/ToastActions';
 
-const RegisterScreen = ({navigation, register}) => {
+const RegisterScreen = ({navigation, registerNewUser}) => {
   const dispatch = useDispatch();
 
   const [formValue, setFormValue] = useState({
@@ -60,7 +60,7 @@ const RegisterScreen = ({navigation, register}) => {
     }
     if (permitSubmit) {
       const {confirmPassword, ...registerForm} = formValue;
-      register(dispatch, registerForm, () => {
+      registerNewUser(dispatch, registerForm, () => {
         clearForm();
         navigation.navigate('LoginScreen');
       });
@@ -155,9 +155,7 @@ const mapStateToProps = state => {
 };
 
 const mapActionToProps = () => {
-  return {
-    register,
-  };
+  return {registerNewUser};
 };
 
 export default connect(mapStateToProps, mapActionToProps)(RegisterScreen);

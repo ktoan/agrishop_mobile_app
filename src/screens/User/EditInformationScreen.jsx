@@ -11,11 +11,11 @@ import Fonts from '../../constants/Fonts';
 import DateInput from '../../components/DateInput';
 import SelectDropdown from '../../components/SelectDropdown';
 import {connect, useDispatch} from 'react-redux';
-import {updateInformation} from '../../redux/actions/userActions';
 import {useState} from 'react';
 import {showErrorToast, showSuccessToast} from '../../utils/ToastActions';
+import {updateUserInformation} from '../../redux/actions/authActions';
 
-const EditInformationScreen = ({navigation, user, updateInformation}) => {
+const EditInformationScreen = ({navigation, user}) => {
   const dispatch = useDispatch();
 
   const [formValue, setFormValue] = useState({
@@ -24,7 +24,6 @@ const EditInformationScreen = ({navigation, user, updateInformation}) => {
     phone: user.phone,
     dayOfBirth: user.dayOfBirth,
     gender: user.gender,
-    password: 'xxxxxx',
   });
 
   function onChangeTextInput(value, name) {
@@ -52,7 +51,7 @@ const EditInformationScreen = ({navigation, user, updateInformation}) => {
       permitSubmit = false;
     }
     if (permitSubmit) {
-      updateInformation(dispatch, user.id, formValue, () => {
+      updateUserInformation(dispatch, formValue, user.id, () => {
         navigation.goBack(null);
       });
     }
@@ -123,7 +122,7 @@ const mapStateToProps = state => {
 
 const mapActionToProps = () => {
   return {
-    updateInformation,
+    updateUserInformation,
   };
 };
 

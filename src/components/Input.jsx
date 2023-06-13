@@ -29,6 +29,7 @@ export default function Input({
         paddingHorizontal: Sizes.space4,
         paddingVertical: Sizes.space3,
         borderRadius: 10,
+        height: 70,
         ...style,
       }}>
       {renderLeftIcon()}

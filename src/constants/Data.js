@@ -35,7 +35,7 @@ export const profile_links = [
     image: Images.address,
     redirectTo: 'AddressesScreen',
   },
-  {id: 3, label: 'My orders', image: Images.order},
+  {id: 3, label: 'My orders', image: Images.order, redirectTo: 'OrdersScreen'},
   {id: 4, label: 'My transactions', image: Images.transaction},
   {id: 5, label: 'Logout', image: Images.logout, logout: true},
 ];

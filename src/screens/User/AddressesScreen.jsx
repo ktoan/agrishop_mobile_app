@@ -7,7 +7,7 @@ import Header from '../../components/Header';
 import Fonts from '../../constants/Fonts';
 import Sizes from '../../constants/Sizes';
 import MainLayout from '../../layouts/MainLayout';
-import {deleteUserAddress} from '../../redux/actions/userActions';
+import {deleteUserAddress} from '../../redux/actions/addressActions';
 
 const AddressesScreen = ({navigation, addresses, deleteUserAddress}) => {
   const dispatch = useDispatch();
@@ -46,13 +46,13 @@ const AddressesScreen = ({navigation, addresses, deleteUserAddress}) => {
 };
 
 const mapStateToProps = state => {
-  return {
-    addresses: state.app.addresses,
-  };
+  return {addresses: state.address.addresses};
 };
 
 const mapActionToProps = () => {
-  return {deleteUserAddress};
+  return {
+    deleteUserAddress,
+  };
 };
 
 export default connect(mapStateToProps, mapActionToProps)(AddressesScreen);

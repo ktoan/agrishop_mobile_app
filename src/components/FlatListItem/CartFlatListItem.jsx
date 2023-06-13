@@ -1,13 +1,25 @@
-import {View, Text, TouchableOpacity} from 'react-native';
-import React from 'react';
-import Sizes from '../../constants/Sizes';
+import React, {useState} from 'react';
+import {Text, TouchableOpacity, View} from 'react-native';
 import Colors from '../../constants/Colors';
-import Shadow from '../../constants/Shadow';
-import RenderPNG from '../RenderPNG';
 import Fonts from '../../constants/Fonts';
 import Images from '../../constants/Images';
+import Shadow from '../../constants/Shadow';
+import Sizes from '../../constants/Sizes';
+import RenderPNG from '../RenderPNG';
+import CheckBox from '../CheckBox';
+import {changeQuantity} from '../../redux/actions/cartActions';
+import {connect, useDispatch} from 'react-redux';
 
-const CartFlatListItem = ({data, isLast, deleteCartItem = () => {}}) => {
+const CartFlatListItem = ({
+  data,
+  isLast,
+  onCheckCartItem = () => {},
+  onUncheckCartItem = () => {},
+  deleteCartItem = () => {},
+}) => {
+  const dispatch = useDispatch();
+  const [isChecked, setChecked] = useState(false);
+
   const ActionQuantityButton = ({imageSource, onPress = () => {}}) => {
     return (
       <TouchableOpacity
@@ -23,6 +35,21 @@ const CartFlatListItem = ({data, isLast, deleteCartItem = () => {}}) => {
       </TouchableOpacity>
     );
   };
+
+  function handleClickCheckBox() {
+    if (!isChecked) {
+      onCheckCartItem();
+      setChecked(true);
+    } else {
+      onUncheckCartItem();
+      setChecked(false);
+    }
+  }
+
+  function handleOnChangeQuantity(dir) {
+    if (isChecked) return;
+    changeQuantity(dispatch, data.id, dir);
+  }
 
   return (
     <View
@@ -45,31 +72,90 @@ const CartFlatListItem = ({data, isLast, deleteCartItem = () => {}}) => {
         <Text style={{...Fonts.h4, width: '90%'}} numberOfLines={1}>
           {data.product.name}
         </Text>
-        <Text
+        <View
           style={{
-            ...Fonts.body4,
-            color: Colors.grey,
+            flexDirection: 'row',
+            alignItems: 'center',
             marginBottom: Sizes.space3,
           }}>
-          {data.quantity} x {data.product.price}$
-        </Text>
+          <Text
+            style={{
+              ...Fonts.body4,
+              color: Colors.grey,
+            }}>
+            {data.quantity}
+          </Text>
+          <Text
+            style={{
+              ...Fonts.body4,
+              color: Colors.grey,
+            }}>
+            {' '}
+            x{' '}
+          </Text>
+          <Text
+            style={{
+              ...Fonts.body4,
+              color: Colors.grey,
+              marginRight: Sizes.space2,
+            }}>
+            $
+            {data.product.saleOff > 0
+              ? (
+                  data.product.price -
+                  (data.product.price * data.product.saleOff) / 100
+                ).toFixed(2)
+              : data.product.price.toFixed(2)}
+          </Text>
+          {data.product.saleOff > 0 ? (
+            <Text
+              style={{
+                ...Fonts.body4,
+                color: Colors.red,
+                textDecorationLine: 'line-through',
+              }}>
+              ${data.product.price.toFixed(2)}
+            </Text>
+          ) : (
+            <></>
+          )}
+        </View>
         <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
           }}>
-          <ActionQuantityButton imageSource={Images.subtract} />
+          <ActionQuantityButton
+            imageSource={Images.subtract}
+            onPress={() => handleOnChangeQuantity('minus')}
+          />
           <Text style={{...Fonts.h3, marginHorizontal: Sizes.space3}}>
             {data.quantity}
           </Text>
-          <ActionQuantityButton imageSource={Images.plus} />
+          <ActionQuantityButton
+            imageSource={Images.plus}
+            onPress={() => handleOnChangeQuantity('plus')}
+          />
         </View>
       </View>
-      <TouchableOpacity activeOpacity={0.7} onPress={deleteCartItem}>
-        <RenderPNG imageSource={Images.delete} />
-      </TouchableOpacity>
+      <View style={{justifyContent: 'space-between'}}>
+        <TouchableOpacity activeOpacity={0.7} onPress={deleteCartItem}>
+          <RenderPNG imageSource={Images.delete} />
+        </TouchableOpacity>
+        <CheckBox isChecked={isChecked} onPress={() => handleClickCheckBox()} />
+      </View>
     </View>
   );
 };
 
-export default CartFlatListItem;
+const mapStateToProps = state => () => {
+  return {};
+};
+
+const mapActionToProps = () => {
+  return {
+    changeQuantity,
+  };
+};
+
+export default connect(mapStateToProps, mapActionToProps)(CartFlatListItem);

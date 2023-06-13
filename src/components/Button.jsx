@@ -27,6 +27,7 @@ export default function Button({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 10,
+        height: 70,
         ...style,
       }}>
       <Text style={{...textStyle, color: fgColor, fontWeight: 'bold'}}>

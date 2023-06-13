@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {TouchableOpacity, View} from 'react-native';
 import InformationFlatListItem from '../../components/FlatListItem/InformationFlatListItem';
 import Header from '../../components/Header';

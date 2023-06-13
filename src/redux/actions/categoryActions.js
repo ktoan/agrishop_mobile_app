@@ -1,18 +1,18 @@
 import axios from 'axios';
-import {setPending} from '../slices/commonSlice';
+import {removeLoading, setLoading} from '../slices/commonSlice';
 import {FETCH_CATEGORIES_URL} from '../../constants/Host';
-import {setCategories} from '../slices/appSlice';
+import {setCategories} from '../slices/categorySlice';
 
 export const fetchCategories = async dispatch => {
-  dispatch(setPending(true));
+  dispatch(setLoading());
   try {
     const res = await axios.get(FETCH_CATEGORIES_URL);
     if (res.data.success) {
       dispatch(setCategories(res.data.categories));
-      dispatch(setPending(false));
+      dispatch(removeLoading());
     }
   } catch (error) {
-    console.log('Fetch Categories error: ', error.message);
-    dispatch(setPending(false));
+    console.log(error.response.data ? error.response.data.msg : error.message);
+    dispatch(removeLoading());
   }
 };

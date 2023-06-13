@@ -1,18 +1,19 @@
 import React, {useState} from 'react';
 import {Text, TouchableOpacity} from 'react-native';
 import {connect, useDispatch} from 'react-redux';
-import Button from '../components/Button';
-import Input from '../components/Input';
-import RenderPNG from '../components/RenderPNG';
-import Colors from '../constants/Colors';
-import Fonts from '../constants/Fonts';
-import Images from '../constants/Images';
-import Shadow from '../constants/Shadow';
-import Sizes from '../constants/Sizes';
-import AuthLayout from '../layouts/AuthLayout';
-import {login} from '../redux/actions/authActions';
+import Button from '../../components/Button';
+import Input from '../../components/Input';
+import RenderPNG from '../../components/RenderPNG';
+import Colors from '../../constants/Colors';
+import Fonts from '../../constants/Fonts';
+import Images from '../../constants/Images';
+import Shadow from '../../constants/Shadow';
+import Sizes from '../../constants/Sizes';
+import AuthLayout from '../../layouts/AuthLayout';
+import {loginUser} from '../../redux/actions/authActions';
+import {showErrorToast} from '../../utils/ToastActions';
 
-const LoginScreen = ({navigation, login}) => {
+const LoginScreen = ({navigation, loginUser}) => {
   const dispatch = useDispatch();
   const [formValue, setFormValue] = useState({email: '', password: ''});
 
@@ -21,7 +22,14 @@ const LoginScreen = ({navigation, login}) => {
   }
 
   function onSubmitForm() {
-    login(dispatch, formValue);
+    let permitSubmit = true;
+    if (!formValue.email || !formValue.password) {
+      showErrorToast('All fields must be filled!');
+      permitSubmit = false;
+    }
+    if (permitSubmit) {
+      loginUser(dispatch, formValue, navigation);
+    }
   }
 
   return (
@@ -77,9 +85,7 @@ const mapStateToProps = state => {
 };
 
 const mapActionToProps = () => {
-  return {
-    login,
-  };
+  return {loginUser};
 };
 
 export default connect(mapStateToProps, mapActionToProps)(LoginScreen);

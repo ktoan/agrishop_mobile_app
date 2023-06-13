@@ -1,17 +1,16 @@
-import {View, Text} from 'react-native';
-import React from 'react';
-import MainLayout from '../../layouts/MainLayout';
-import Header from '../../components/Header';
-import Sizes from '../../constants/Sizes';
-import Input from '../../components/Input';
-import Button from '../../components/Button';
-import Fonts from '../../constants/Fonts';
-import RenderPNG from '../../components/RenderPNG';
-import Images from '../../constants/Images';
-import {useState} from 'react';
-import {showErrorToast} from '../../utils/ToastActions';
-import {createUserAddress} from '../../redux/actions/userActions';
+import React, {useState} from 'react';
+import {View} from 'react-native';
 import {connect, useDispatch} from 'react-redux';
+import Button from '../../components/Button';
+import Header from '../../components/Header';
+import Input from '../../components/Input';
+import RenderPNG from '../../components/RenderPNG';
+import Fonts from '../../constants/Fonts';
+import Images from '../../constants/Images';
+import Sizes from '../../constants/Sizes';
+import MainLayout from '../../layouts/MainLayout';
+import {showErrorToast} from '../../utils/ToastActions';
+import {createUserAddress} from '../../redux/actions/addressActions';
 
 const AddAddressScreen = ({navigation, createUserAddress}) => {
   const dispatch = useDispatch();
@@ -101,9 +100,7 @@ const mapStateToProps = state => {
 };
 
 const mapActionToProps = () => {
-  return {
-    createUserAddress,
-  };
+  return {createUserAddress};
 };
 
 export default connect(mapStateToProps, mapActionToProps)(AddAddressScreen);
