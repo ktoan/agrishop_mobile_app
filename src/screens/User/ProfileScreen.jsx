@@ -11,10 +11,13 @@ import LineDivider from '../../components/LineDivider';
 import {profile_links} from '../../constants/Data';
 import ProfileLinkFlatListItem from '../../components/FlatListItem/ProfileLinkFlatListItem';
 import {connect, useDispatch} from 'react-redux';
-import {logout} from '../../redux/actions/authActions';
+import {useState} from 'react';
+import {logoutUser} from '../../redux/actions/authActions';
+import ChangePasswordModal from '../../components/ChangePasswordModal';
 
-const ProfileScreen = ({navigation, logout, user}) => {
+const ProfileScreen = ({navigation, logoutUser, user}) => {
   const dispatch = useDispatch();
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const renderHeader = () => {
     return (
       <>
@@ -55,17 +58,11 @@ const ProfileScreen = ({navigation, logout, user}) => {
                 ({user.email})
               </Text>
               <Button
-                text="Lock your account"
-                textStyle={{...Fonts.body5}}
-                bgColor={Colors.red}
-                bdColor={Colors.red}
-                style={{marginBottom: Sizes.space3}}
-              />
-              <Button
                 text="Change your password"
                 textStyle={{...Fonts.body5}}
                 bgColor={Colors.yellow}
                 bdColor={Colors.yellow}
+                onPress={() => setShowChangePasswordModal(true)}
               />
             </View>
           </View>
@@ -78,13 +75,19 @@ const ProfileScreen = ({navigation, logout, user}) => {
     if (!data.logout) {
       navigation.navigate(data.redirectTo);
     } else {
-      logout(dispatch);
+      logoutUser(dispatch);
     }
   }
 
   return (
     <MainLayout renderHeader={renderHeader}>
       <LineDivider />
+      {showChangePasswordModal && (
+        <ChangePasswordModal
+          isVisible={showChangePasswordModal}
+          onClose={() => setShowChangePasswordModal(false)}
+        />
+      )}
       <View
         style={{
           paddingVertical: Sizes.space3,
@@ -111,7 +114,7 @@ const mapStateToProps = state => {
 
 const mapActionToProps = () => {
   return {
-    logout,
+    logoutUser,
   };
 };
 

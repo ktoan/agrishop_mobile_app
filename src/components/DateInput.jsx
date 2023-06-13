@@ -47,6 +47,7 @@ export default function DateInput({
               paddingHorizontal: Sizes.space4,
               paddingVertical: Sizes.space3,
               borderRadius: 10,
+              height: 70,
               ...style,
             }}>
             <RenderPNG imageSource={Images.calendar} />

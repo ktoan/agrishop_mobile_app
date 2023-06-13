@@ -51,4 +51,12 @@ export default {
   camera_light: require('../assets/icons/camera_light.png'),
   eye: require('../assets/icons/eye.png'),
   blind: require('../assets/icons/blind.png'),
+  comment: require('../assets/icons/comment.png'),
+  payment: require('../assets/icons/payment.png'),
+  visa: require('../assets/icons/visa.png'),
+  cvc: require('../assets/icons/cvc.png'),
+  text: require('../assets/icons/text.png'),
+  cardFront: require('../assets/images/cardFront.png'),
+  cardBack: require('../assets/images/cardBack.png'),
+  ellipsis: require('../assets/icons/ellipsis.png'),
 };

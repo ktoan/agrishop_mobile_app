@@ -1,16 +1,15 @@
-import {View, Text} from 'react-native';
-import React from 'react';
-import MainLayout from '../../layouts/MainLayout';
+import React, {useState} from 'react';
+import {View} from 'react-native';
+import {connect, useDispatch} from 'react-redux';
+import Button from '../../components/Button';
 import Header from '../../components/Header';
-import Sizes from '../../constants/Sizes';
 import Input from '../../components/Input';
 import RenderPNG from '../../components/RenderPNG';
-import Images from '../../constants/Images';
-import {useState} from 'react';
-import Button from '../../components/Button';
 import Fonts from '../../constants/Fonts';
-import {updateUserAddress} from '../../redux/actions/userActions';
-import {connect, useDispatch} from 'react-redux';
+import Images from '../../constants/Images';
+import Sizes from '../../constants/Sizes';
+import MainLayout from '../../layouts/MainLayout';
+import {updateUserAddress} from '../../redux/actions/addressActions';
 
 const EditAddressScreen = ({navigation, route, updateUserAddress}) => {
   const dispatch = useDispatch();
@@ -38,8 +37,8 @@ const EditAddressScreen = ({navigation, route, updateUserAddress}) => {
       permitSubmit = false;
     }
     if (permitSubmit) {
-      updateUserAddress(dispatch, address.id, formValue, () => {
-        navigation.goBack();
+      updateUserAddress(dispatch, formValue, address.id, () => {
+        navigation.goBack(null);
       });
     }
   }
@@ -97,9 +96,7 @@ const mapStateToProps = state => {
 };
 
 const mapActionToProps = () => {
-  return {
-    updateUserAddress,
-  };
+  return {updateUserAddress};
 };
 
 export default connect(mapStateToProps, mapActionToProps)(EditAddressScreen);

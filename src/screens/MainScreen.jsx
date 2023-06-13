@@ -3,36 +3,39 @@ import React, {useEffect} from 'react';
 import {connect, useDispatch} from 'react-redux';
 import TabIcon from '../components/TabIcon';
 import Images from '../constants/Images';
-import {fetchCategories} from '../redux/actions/categoryActions';
-import {fetchProducts} from '../redux/actions/productActions';
-import {fetchAddresses} from '../redux/actions/userActions';
 import Home from '../screens/Home/Home';
 import Cart from './Cart/Cart';
 import Post from './Post/Post';
 import Product from './Product/Product';
 import Account from './User/Account';
-import axios from 'axios';
-import {fetchCart} from '../redux/actions/cartActions';
+import {fetchProducts} from '../redux/actions/productActions';
 import {setAuthToken} from '../utils/SetAuthToken';
+import {fetchCategories} from '../redux/actions/categoryActions';
+import {fetchUserAddresses} from '../redux/actions/addressActions';
+import {fetchUserCart, fetchUserOrders} from '../redux/actions/cartActions';
+import {fetchPosts} from '../redux/actions/postActions';
 
 const MainBottomTabs = createBottomTabNavigator();
 
 const MainScreen = ({
-  fetchCategories,
-  fetchProducts,
-  fetchAddresses,
-  fetchCart,
   token,
+  fetchProducts,
+  fetchCategories,
+  fetchUserAddresses,
+  fetchUserCart,
+  fetchPosts,
   user,
 }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
     setAuthToken(token);
-    fetchCategories(dispatch);
     fetchProducts(dispatch);
-    fetchAddresses(dispatch, user.id);
-    fetchCart(dispatch);
+    fetchPosts(dispatch);
+    fetchCategories(dispatch);
+    fetchUserAddresses(dispatch, user.id);
+    fetchUserCart(dispatch);
+    fetchUserOrders(dispatch);
   }, []);
 
   return (
@@ -145,14 +148,17 @@ const MainScreen = ({
 };
 
 const mapStateToProps = state => {
-  return {
-    user: state.auth.user,
-    token: state.auth.access_token,
-  };
+  return {token: state.auth.token, user: state.auth.user};
 };
 
 const mapActionToProps = () => {
-  return {fetchCategories, fetchProducts, fetchAddresses, fetchCart};
+  return {
+    fetchProducts,
+    fetchCategories,
+    fetchUserAddresses,
+    fetchUserCart,
+    fetchPosts,
+  };
 };
 
 export default connect(mapStateToProps, mapActionToProps)(MainScreen);

@@ -2,23 +2,22 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NativeBaseProvider} from 'native-base';
 import React, {useEffect} from 'react';
+import Toast from 'react-native-toast-message';
 import {connect, useDispatch} from 'react-redux';
 import Loading from './src/components/Loading';
-import {loadUser} from './src/redux/actions/authActions';
-import LoginScreen from './src/screens/LoginScreen';
-import MainScreen from './src/screens/MainScreen';
-import RegisterScreen from './src/screens/RegisterScreen';
+import LoginScreen from './src/screens/Auth/LoginScreen';
+import RegisterScreen from './src/screens/Auth/RegisterScreen';
 import WalkThroughScreen from './src/screens/WalkThroughScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
-import Toast from 'react-native-toast-message';
+import MainScreen from './src/screens/MainScreen';
+import {loadUser} from './src/redux/actions/authActions';
 import {setAuthToken} from './src/utils/SetAuthToken';
-import axios from 'axios';
+import VerifyAccountScreen from './src/screens/Auth/VerifyAccountScreen';
 
 const AppStack = createNativeStackNavigator();
 
-const App = ({user, isPending, token, loadUser}) => {
+const App = ({user, token, isLoading}) => {
   const dispatch = useDispatch();
-
   useEffect(() => {
     setAuthToken(token);
     loadUser(dispatch);
@@ -27,8 +26,10 @@ const App = ({user, isPending, token, loadUser}) => {
   return (
     <NavigationContainer>
       <NativeBaseProvider>
-        <Loading visible={isPending} />
-        {!user || !token ? (
+        <Loading visible={isLoading} />
+        {user && token ? (
+          <MainScreen />
+        ) : (
           <AppStack.Navigator screenOptions={{headerShown: false}}>
             <AppStack.Screen name="WelcomeScreen" component={WelcomeScreen} />
             <AppStack.Screen
@@ -37,9 +38,11 @@ const App = ({user, isPending, token, loadUser}) => {
             />
             <AppStack.Screen name="LoginScreen" component={LoginScreen} />
             <AppStack.Screen name="RegisterScreen" component={RegisterScreen} />
+            <AppStack.Screen
+              name="VerifyAccountScreen"
+              component={VerifyAccountScreen}
+            />
           </AppStack.Navigator>
-        ) : (
-          <MainScreen />
         )}
         <Toast />
       </NativeBaseProvider>
@@ -50,8 +53,8 @@ const App = ({user, isPending, token, loadUser}) => {
 const mapStateToProps = state => {
   return {
     user: state.auth.user,
-    isPending: state.common.isPending,
-    token: state.auth.access_token,
+    token: state.auth.token,
+    isLoading: state.common.isLoading,
   };
 };
 
